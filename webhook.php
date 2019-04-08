@@ -25,7 +25,7 @@
     if(!isset($inputJson["targetUrl"]))
     {
         require_once "arduinoHello.php";
-        prepareExit();
+        exit;
     }
     $message = json_decode(wGet("messages/" . $inputJson["data"]["id"]), true); // webex message array
     if($message["personEmail"] == email) exit; // make sure this is not the bot's message
