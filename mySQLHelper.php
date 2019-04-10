@@ -8,7 +8,7 @@
      */
     function mySQLLog($str, $type = null)
     {
-        if($GLOBALS["mySQLLogEnabled"]) fLog("[mySQL] $str", $type);
+        if($GLOBALS["mySQLLogEnabled"]) logFile("[mySQL] $str", $type);
     }
 
     /**

@@ -9,6 +9,7 @@
     // write errors to file
     ini_set("log_errors", 1);
     ini_set("error_log", logFile);
+    $mySQLLogEnabled = true;
 
     // get informations about the webex message
     $input = file_get_contents("php://input"); // body
@@ -33,8 +34,6 @@
     if(strlen($text) > 0) fLog("Message received: $text");
     $roomId = $message["roomId"];
 
-    $mySQLLogEnabled = true;
-    
     const keywords = array("add", "remove", "list");
     // respond messages
     const syntax = array(

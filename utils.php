@@ -26,6 +26,23 @@
         echo sprintf($color, str_replace(array("\n", "\t"), array("<br/>", "&emsp;"), $txt)) . "<br/>";
     }
 
+    function logFile($str, $type = null)
+    {
+        $txt = "[" . date("Y.m.d-H:i:s:") . "] ";
+        switch($type)
+        {
+            case "err":
+                $txt .= "[ERROR] $str";
+                break;
+            case "info":
+                $txt .= "[INFO] $str";
+                break;
+            default:
+                $txt .= $str;
+        };
+        file_put_contents(logFile, "$txt\n", FILE_APPEND);
+    }
+
     /**
      * Return the the string value of the input boolean
      * If the input is not a boolean, it return NULL
