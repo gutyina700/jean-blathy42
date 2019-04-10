@@ -43,10 +43,10 @@
         "baseAddDevice" => "add device <name> <id|serial>",
         "baseAddDeviceName" => "add device %s <id|serial>",
         "baseAddDeviceNameId" => "add device %s %s",
-        "baseAddFeature" => "add feature <name> <device_name> <pin> <digital|analog|virtual> <read|write>",
-        "baseAddFeatureName" => "add feature %s <device_name> <pin> <digital|analog|virtual> <read|write>",
-        "baseAddFeatureNameDevicename" => "add feature %s %s <pin> <digital|analog|virtual> <read|write>",
-        "baseAddFeatureNameDevicenamePin" => "add feature %s %s %s <digital|analog|virtual> <read|write>",
+        "baseAddFeature" => "add feature <name> <device_name> <pin> <digital|analog> <read|write>",
+        "baseAddFeatureName" => "add feature %s <device_name> <pin> <digital|analog> <read|write>",
+        "baseAddFeatureNameDevicename" => "add feature %s %s <pin> <digital|analog> <read|write>",
+        "baseAddFeatureNameDevicenamePin" => "add feature %s %s %s <digital|analog> <read|write>",
         "baseAddFeatureNameDevicenamePinType" => "add feature %s %s %s %s <read|write>",
         "baseAddFeatureNameDevicenamePinTypeReadwrite" => "add feature %s %s %s %s %s",
         "baseRemove" => "remove <device|feature> <name>",
@@ -78,7 +78,6 @@
         "errFeatureReadOnly" => "Feature %s is read only.",
         "errFeatureDigital" => "The value of a digital feature can only be true or false.",
         "errFeatureAnalog" => "The value of an analog feature can only 0 to 1023.",
-        "errFeatureVirtual" => "The value of a virtual feature can only be a decimal number.",
         "errListDevicesEmpty" => "You don't have any devices.",
         "errListFeaturesEmpty" => "You don't have any features.",
         "errNotExist" => "%s %s is not exists.",
@@ -237,7 +236,7 @@
                         checkBetween("Pin number", $pin, $pinMin, $pinMax);
                         if($count == 6) showSyntax("baseAddFeatureNameDevicenamePin", $featureName, $deviceName, $pin);
                         $pinType = $params[6];
-                        if(!arrayContains(array("digital", "analog", "virtual"), $pinType)) showSyntax("baseAddFeatureNameDevicenamePin", $featureName, $deviceName, $pin);
+                        if(!arrayContains(array("digital", "analog"), $pinType)) showSyntax("baseAddFeatureNameDevicenamePin", $featureName, $deviceName, $pin);
                         $pinsFound = mySQLExec("SELECT COUNT(id) AS count FROM feature WHERE device_id = '%s' AND pin_type = '%s' AND pin_number = '%s'", $deviceId, $pinType, $pin)[0]["count"];
                         if($pinsFound == 1) show("errAlreadyOccupied", "Pin", $pinType . " " . $pin);
                         if($pinsFound > 1) dbError("DUPLICATE ROWS FOUND IN FEATURE TABLE: device_id: $deviceId, pin_type: $pinType, pin_number: $pinNumber");
@@ -348,9 +347,6 @@
                                 case "analog":
                                     $pinValue = round($pinValue);
                                     break;
-                                case "virtual":
-                                    $pinValue = (float)$pinValue;
-                                    break;
                             }
                             $listFeatures .= sprintf("\t%s: device: %s, pin: %s %s %s -> %s\n", $val["feature_name"], $val["device_name"], $val["pin_type"], $val["pin_number"], $val["is_write"], $pinValue);
                         }
@@ -384,9 +380,6 @@
                             case "analog":
                                 $pinValue = round($pinValue);
                                 break;
-                            case "virtual":
-                                $pinValue = (float)$pinValue;
-                                break;
                         }
                         show("succPinGet", $featureName, $pinValue);
                         break;
@@ -404,15 +397,8 @@
                                 else show("errFeatureDigital");
                                 break;
                             case "analog":
-                                respond("1");
                                 checkInt("Analog pin value", $pinValue);
-                                respond("2");
                                 if($pinValue < 0 || $pinValue > 1023) show("errFeatureAnalog");
-                                respond("3");
-                                
-                                break;
-                            case "virtual":
-                                if(!isFloat($pinValue)) show("errFeatureVirtual");
                                 break;
                         }
                         if($count != 4) showSyntax("baseFeatureNameSetValue", $featureName, $pinValue);
