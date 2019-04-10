@@ -30,13 +30,11 @@ if($chipId != null){
 				if($set[$j]["pin_number"] == $arduinoDataIndex)
 				{
 					$setPinIndex = $j;
-					logFile("found pin_number exiting for loop");
 					break;
 				}
 				if($set[$j]["pin_type"] == "analog")
 				{
 					$setPinIndex = $j;
-					logFile("yay");
 					break;
 				}
 			}
